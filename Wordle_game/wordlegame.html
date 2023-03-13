@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+		<style>*,
+			*::after,
+			*::before {
+				box-sizing: border-box;
+				font-family: Arial;
+			}
+			
+			body {
+				background-color: hsl(240, 100%, 82%);
+				display: flex;
+				flex-direction: column;
+				min-height: 100vh;
+				margin: 0;
+				padding: 1em;
+				font-size: clamp(0.5rem, 2.5vmin, 1.5rem);
+			}
+			
+			.keyboard {
+				display: grid;
+				grid-template-columns: repeat(20, minmax(auto, 1.25em));
+				grid-auto-rows: 3em;
+				gap: 0.25em;
+				justify-content: center;
+			}
+			
+			.key {
+				font-size: inherit;
+				grid-column: span 2;
+				border: none;
+				padding: 0;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				background-color: hsl(
+					var(--hue, 200),
+					var(--saturation, 1%),
+					calc(var(--lightness-offset, 0%) + var(--lightness, 51%))
+				);
+				color: white;
+				fill: white;
+				text-transform: uppercase;
+				border-radius: 0.25em;
+				cursor: pointer;
+				user-select: none;
+			}
+			
+			.key.large {
+				grid-column: span 3;
+			}
+			
+			.key > svg {
+				width: 1.75em;
+				height: 1.75em;
+			}
+			
+			.key:hover,
+			.key:focus {
+				--lightness-offset: 10%;
+			}
+			
+			.key.wrong {
+				--lightness: 23%;
+			}
+			
+			.key.wrong-location {
+				--hue: 49;
+				--saturation: 51%;
+				--lightness: 47%;
+			}
+			
+			.key.correct {
+				--hue: 115;
+				--saturation: 29%;
+				--lightness: 43%;
+			}
+			
+			.guess-grid {
+				display: grid;
+				justify-content: center;
+				align-content: center;
+				flex-grow: 1;
+				grid-template-columns: repeat(5, 4em);
+				grid-template-rows: repeat(6, 4em);
+				gap: 0.25em;
+				margin-bottom: 1em;
+			}
+			
+			.tile {
+				font-size: 2em;
+				color: white;
+				border: 0.05em solid hsl(240, 2%, 23%);
+				text-transform: uppercase;
+				font-weight: bold;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				user-select: none;
+				transition: transform 250ms linear;
+			}
+			
+			.tile[data-state="active"] {
+				border-color: hsl(200, 1%, 34%);
+			}
+			
+			.tile[data-state="wrong"] {
+				border: none;
+				background-color: hsl(240, 2%, 23%);
+			}
+			
+			.tile[data-state="wrong-location"] {
+				border: none;
+				background-color: hsl(49, 51%, 47%);
+			}
+			
+			.tile[data-state="correct"] {
+				border: none;
+				background-color: hsl(115, 29%, 43%);
+			}
+			
+			.tile.shake {
+				animation: shake 250ms ease-in-out;
+			}
+			
+			@keyframes shake {
+				10% {
+					transform: translateX(-5%);
+				}
+				30% {
+					transform: translateX(5%);
+				}
+				50% {
+					transform: translateX(-7.5%);
+				}
+				70% {
+					transform: translateX(7.5%);
+				}
+				90% {
+					transform: translateX(-5%);
+				}
+				100% {
+					transform: translateX(0);
+				}
+			}
+			
+			.tile.flip {
+				transform: rotateX(90deg);
+			}
+			
+			.tile.dance {
+				animation: dance 500ms ease-in-out;
+			}
+			
+			@keyframes dance {
+				20% {
+					transform: translateY(-50%);
+				}
+			
+				40% {
+					transform: translateY(5%);
+				}
+			
+				60% {
+					transform: translateY(-25%);
+				}
+			
+				80% {
+					transform: translateY(2.5%);
+				}
+			
+				90% {
+					transform: translateY(-5%);
+				}
+			
+				100% {
+					transform: translateY(0);
+				}
+			}
+			
+			.alert-container {
+				position: fixed;
+				top: 10vh;
+				left: 50vw;
+				transform: translateX(-50%);
+				z-index: 1;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+			
+			.alert {
+				pointer-events: none;
+				background-color: hsl(204, 7%, 85%);
+				padding: 0.75em;
+				border-radius: 0.25em;
+				opacity: 1;
+				transition: opacity 500ms ease-in-out;
+				margin-bottom: 0.5em;
+			}
+			
+			.alert:last-child {
+				margin-bottom: 0;
+			}
+			
+			.alert.hide {
+				opacity: 0;
+			}
+			</style>
+		<script src="script.js" defer></script>
+		<title>Wordle Game</title>
+		
+	</head>
+	<body style=" background-color: rgb(255, 52, 52);" >
+		<div style=" color: rgb(0, 0, 0);" align = " center"<strong> <b>WORDLE GAME  </b></WORDLE></strong></div>
+		<br>
+		<div class="alert-container" data-alert-container></div>
+		
+		<div data-guess-grid class="guess-grid">
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+			<div class="tile"></div>
+		</div>
+		<div class="keyboard" data-keyboard>
+			<button class="key" data-key="Q">Q</button>
+			<button class="key" data-key="W">W</button>
+			<button class="key" data-key="E">E</button>
+			<button class="key" data-key="R">R</button>
+			<button class="key" data-key="T">T</button>
+			<button class="key" data-key="Y">Y</button>
+			<button class="key" data-key="U">U</button>
+			<button class="key" data-key="I">I</button>
+			<button class="key" data-key="O">O</button>
+			<button class="key" data-key="P">P</button>
+			<div class="space"></div>
+			<button class="key" data-key="A">A</button>
+			<button class="key" data-key="S">S</button>
+			<button class="key" data-key="D">D</button>
+			<button class="key" data-key="F">F</button>
+			<button class="key" data-key="G">G</button>
+			<button class="key" data-key="H">H</button>
+			<button class="key" data-key="J">J</button>
+			<button class="key" data-key="K">K</button>
+			<button class="key" data-key="L">L</button>
+			<div class="space"></div>
+			<button class="key large" data-enter>Enter</button>
+			<button class="key" data-key="Z">Z</button>
+			<button class="key" data-key="X">X</button>
+			<button class="key" data-key="C">C</button>
+			<button class="key" data-key="V">V</button>
+			<button class="key" data-key="B">B</button>
+			<button class="key" data-key="N">N</button>
+			<button class="key" data-key="M">M</button>
+			<button class="key large" data-delete>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					height="24"
+					viewBox="0 0 24 24"
+					width="24"
+				>
+					<path
+						fill="var(--color-tone-1)"
+						d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H7.07L2.4 12l4.66-7H22v14zm-11.59-2L14 13.41 17.59 17 19 15.59 15.41 12 19 8.41 17.59 7 14 10.59 10.41 7 9 8.41 12.59 12 9 15.59z"
+					></path>
+				</svg>
+			</button>
+		</div>
+	</body>
+</html>
