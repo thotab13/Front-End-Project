@@ -1,1298 +1,337 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-    
-    <style>
-      /* CSS VARIABLES */
-:root {
-  --dark: hsl(227, 54%, 16%);
-  --light: hsl(0, 0%, 100%);
-  --player1: hsl(261, 96%, 83%);
-  --light-pink: hsl(170, 97%, 29%);
-  --yellow: hsl(50, 100%, 50%);
-  --player2: hsl(202, 100%, 70%);
-  --robot: hsl(0, 100%, 58%);
-  --enemy: hsl(0, 100%, 100%);
-  --easy: hsl(104, 100%, 53%);
-  --mid: hsl(29, 62%, 64%);
-  --hard: hsl(0, 85%, 36%);
-}
 
-/* FONT IMPORTS */
-@font-face {
-  font-family: 'GrilledCheese BTN';
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-  src: local('GrilledCheese BTN'),
-    url('fonts/GrilledCheese BTN.woff') format('woff');
-}
+<head>
+	<title>Tic Tac Toe</title>
+	
+	<link href="https://fonts.googleapis.com/css?family=Orbitron&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Rock+Salt&display=swap" rel="stylesheet">
+	<style>
+		
+/* CSS */
 
-/* RESET */
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+	margin: 0;
+	padding: 0;
+	font-family: 'Orbitron', sans-serif;
+	/* user-select: none; */
 }
-
-/* UTILITY CLASSES */
-.text-stroke {
-  text-shadow: -0.1em 0 0.06em var(--dark), 0.1em 0 0.06em var(--dark),
-    0 0.1em 0.06em var(--dark), 0 -0.1em 0.06em var(--dark),
-    -0.1em 0.1em 0.06em var(--dark), 0.1em 0.1em 0.06em var(--dark),
-    -0.1em -0.1em 0.06em var(--dark), 0.1em -0.1em 0.06em var(--dark);
+body h1 {
+	text-align: center;
 }
-
-.animate-fadein {
-  opacity: 1;
-  animation: 0.2s ease-in-out fadein;
+html {
+	background: url(wal.jpg) no-repeat center center fixed;
+	-webkit-background-size: cover;
+	/* -webkit-animation: ; */
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
 }
-
-@keyframes fadein {
-  0% {
-    visibility: hidden;
-    opacity: 0;
-  }
-
-  100% {
-    visibility: visible;
-    opacity: 1;
-  }
+div.game-board {
+	border-radius: 3mm;
+	border: 3px solid rgb(106, 106, 215);
+	width: 309px;
+	height: 345px;
+	margin: 0 auto;
+	box-shadow: 10px 10px 90px 15px rgb(254, 176, 79);
 }
-
-.animate-bob:hover,
-.animate-bob-turn,
-.animate-bob-auto:placeholder-shown {
-  animation: 0.75s ease-in-out infinite bob;
+div[id^="row"] div:first-child {
+	border-left: none;
 }
-
-@keyframes bob {
-  0% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-0.5rem);
-  }
-
-  100% {
-    transform: translateY(0);
-  }
+div[id^="row"] div:last-child {
+	border-right: none;
 }
-
-.animate-scale:hover {
-  border-color: var(--dark-soft);
-  animation: 0.5s ease-in-out infinite scale;
+div[id="row-3"] div:first-child {
+	border-bottom: none;
 }
-
-@keyframes scale {
-  0% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: scale(1.05);
-  }
-
-  100% {
-    transform: translateY(0);
-  }
+div[id="row-3"] div:nth-child(2) {
+	border-bottom: none;
 }
-
-.animate-grayscale {
-  transition: 0.25s ease-in-out filter;
-  filter: grayscale(90%);
+div[id="row-3"] div:last-child {
+	border-bottom: none;
 }
-
-.animate-grayscale:hover {
-  filter: none;
+div[id^="row"] {
+	margin: 0;
+	clear: both;
 }
-
-/* GENERAL STYLES */
+div[id="text"] {
+	font-family: 'Rock Salt', cursive;
+	font-weight: bold;
+	box-shadow: 10px 10px 40px deepskyblue;
+	display: none;
+	border-radius: 1cm;
+	width: 340px;
+	height: 100px;
+	border: 3px solid black;
+	float: left;
+	position: absolute;
+	left: 45%;
+	top: 45%;
+	margin-left: -100px;
+	background-color: rgb(244, 164, 96);
+}
+section {
+	font-size: 40px;
+	font-family: 'Rock Salt', cursive;
+}
+div[id^="row"] div {
+	width: 100px;
+	height: 100px;
+	border: 2px solid rgb(100, 214, 100);
+	float: left;
+}
+div.game-board h2 {
+	border-radius: 2mm;
+	border: 2.5px solid rgb(89, 89, 216);
+}
 body {
-  background-image: url(symbols-bg.svg),
-    linear-gradient(90deg, #000000 0%, #c6a8fd 100%);
-  background-repeat: no-repeat;
-  background-size: cover;
-  color: var(--dark);
-  font-family: 'GrilledCheese BTN';
+	margin: 10px auto;
+	width: 1000px;
+	text-align: center;
+	overflow: hidden;
+}
+b {
+	position: absolute;
+	bottom: 5px;
+	right: 5px;
+	text-align: right;
+}
+div[id="namer"] {
+	display: none;
+	border: 2px solid;
+	width: 400px;
+	height: 210px;
+	background-color: #b139b1;
+	border-radius: 5mm;
+	position: absolute;
+	left: 37%;
+}
+a {
+	position: absolute;
+	right: 1%;
+	top: 1%;
+}
+button[id="mode"] {
+	background-color: cyan;
+	border: 2px solid black;
+	padding: 8px 25px;
+	text-align: center;
+	font-weight: bold;
+	font-family: 'Rock Salt', cursive;
+	border-radius: 7mm;
+}
+button[id="mode"]:hover,
+button[id="marker"]:hover,
+button[id="fir"]:hover {
+	border: 2px solid rgb(236, 218, 114);
+	transform: scale(1.1);
+}
+button[id="marker"] {
+	background-color: #b72eb7;
+	border: 2px solid black;
+	padding: 8px 25px;
+	text-align: center;
+	font-weight: bold;
+	font-family: 'Rock Salt', cursive;
+	border-radius: 7mm;
+}
+button[id="htp"] {
+	background-color: darkorchid;
+	padding: 1px 8px;
+	font-weight: bold;
+	text-align: center;
+	color: goldenrod;
+	font-family: 'Rock Salt', cursive;
+	border-radius: 5mm;
+	animation: htp-animation 10s infinite;
+}
+@keyframes htp-animation {
+	0% {
+		border: 2px solid gold;
+	}
+	25% {
+		border: 2px solid black;
+		transform: scale(1.1);
+	}
+	50% {
+		border: 2px solid red;
+		transform: scale(0.9);
+	}
+	75% {
+		border: 2px solid blue;
+	}
+	100% {
+		border: 2px solid green;
+		transform: scale(1);
+	}
+}
+.cell:hover {
+	box-shadow: 0 0 10px #ccc;
+}
+.game-board:hover {
+	border: 3px solid black;
+	box-shadow: 0 0 10px red;
+	box-shadow: 10px 10px 90px 15px darkturquoise;
+}
+h2[id="editor"]:hover {
+	font-size: 6mm;
+	border: 3.5px solid darkcyan;
+	box-shadow: 0 0 10px red;
+}
+button[id="game-reset"] {
+	background-color: rgb(148, 55, 195);
+	padding: 1px 8px;
+	font-weight: bold;
+	font-size: 0.5cm;
+	text-align: center;
+	color: goldenrod;
+	border-radius: 5mm;
+}
+button[id="undo"] {
+	background-color: rgb(154, 49, 206);
+	padding: 1px 8px;
+	font-weight: bold;
+	font-size: 0.5cm;
+	text-align: center;
+	color: goldenrod;
+	border-radius: 5mm;
+}
+input[id="Submit"] {
+	background-color: darkcyan;
+	padding: 1px 6px;
+	font-size: 4mm;
+	text-align: center;
+	color: goldenrod;
+	border-radius: 5mm;
+}
+input[type="text"] {
+	border-radius: 3mm;
+	background-color: darkgrey;
+	font-family: 'Rock Salt', cursive;
+}
+div[id="first"] {
+	display: none;
+	border: 2px solid;
+	width: 360px;
+	height: 150px;
+	background-color: #ce32ce;
+	border-radius: 5mm;
+	position: absolute;
+	left: 37%;
+}
+button[id="fir"] {
+	background-color: #b01eb0;
+	border: 2px solid black;
+	padding: 8px 25px;
+	text-align: center;
+	font-weight: bold;
+	font-family: 'Rock Salt', cursive;
+	border-radius: 7mm;
 }
 
-img {
-  max-width: 100%;
+.button-group button{
+	margin-top: 10px;
+	
 }
+	</style>
+</head>
+
+<body>
+	<div>
+		<br>
+		<h1 class="middle">
+                Welcome <br>
+               To<br>
+				Tic Tac Toe Game!
+            </h1>	
+	</div>
+	<br>
+	<br>
+	<div id="game-mode" style="display: block;">
+		<h3>
+                Select Game Mode:
+            </h3>
+		<br>
+		<button id="mode" value="sp" onclick="mode('sp');">Single Player Mode</button>&nbsp;
+		<button id="mode" value="mp" onclick="mode('mp');">Multi Player Mode</button>
+	</div>
+	<div id="marker" style="display: none;">
+		<br>
+		<h3>
+                What would you like to chose?
+            </h3>
+		<br>
+		<button id="marker" value="sp" onclick="markerchoice('X');">X</button>&nbsp;
+		<button id="marker" value="mp" onclick="markerchoice('O');">O</button>
+	</div>
+	<div id="namer">
+		<h3 style="text-decoration: underline;">
+                Enter Player Details
+            </h3>
+		<br>
+		<br>
+		<form id="frm1">Player 1 Name:
+			<input type="text" id="p1name" placeholder="Player 1">
+			<br>
+			<br>Player 2 Name:
+			<input type="text" id="p2name" placeholder="Player 2">
+			<br>
+			<br>
+			<input type="button" id="Submit" onclick="naming()" value="Submit">
+		
+		</form>
+		
+	</div>
+	<div id="first">
+		<br>
+		<h3>
+					Who would play first?
+				</h3>
+		<br>
+		<button id="fir" onclick="firstPlay('Player');">Player 1</button>&nbsp;
+		<button id="fir" onclick="firstPlay('Computer');">Computer</button>
+	</div>
+	
+	<div class="game-board" id="board" style="display: none;">
+		
+		<h2 id="editor" style="font-weight: normal;">
+                Player 1's Turn
+            </h2>
+			
+		<div id="row-1">
+			<div id="0" onclick="play(this);" class="cell"> </div>
+			<div id="1" onclick="play(this);" class="cell"> </div>
+			<div id="2" onclick="play(this);" class="cell"> </div>
+		</div>
+		<div id="row-2">
+			<div id="3" onclick="play(this);" class="cell"> </div>
+			<div id="4" onclick="play(this);" class="cell"> </div>
+			<div id="5" onclick="play(this);" class="cell"> </div>
+		</div>
+		<div id="row-3">
+			<div id="6" onclick="play(this);" class="cell"> </div>
+			<div id="7" onclick="play(this);" class="cell"> </div>
+			<div id="8" onclick="play(this);" class="cell"> </div>
+		</div>
+		<div class="button-group">
+			<button id="undo" onclick="undo()" style="position: static; left: 57.5%;" >&nbsp; undo &nbsp;</button>
+			<button id="game-reset" onclick="reset();" style="position: static; left: 57.5%;">&nbsp; Reset &nbsp;</button>
+		</div>
+	</div>
+
+	</div>
+	
+	<div id="text">
+		
+	</div>
+
+	<br>
+	
+	
+	<a href="https://en.wikipedia.org/wiki/Tic-tac-toe" id="howto">
+		<button id="htp">How to Play</button>
+	</a>
+	<script src="main.js"></script>
+</body>
 
-header,
-main,
-footer,
-.card,
-.img-holder,
-.prematch-player,
-.board__square,
-.round-result,
-.result--controls,
-.controls__back,
-.controls__next-round,
-.controls__reset-score {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.game--menu,
-.game--pvp,
-.game--pve,
-.game--board {
-  display: none;
-  align-content: center;
-  justify-content: center;
-  justify-items: center;
-  row-gap: 2rem;
-}
-
-.wrapper {
-  display: grid;
-  grid-template-rows: min-content auto min-content;
-  grid-template-columns: 1fr;
-  margin-right: auto;
-  margin-left: auto;
-  width: 90%;
-  max-width: 1440px;
-  min-height: 100vh;
-}
-
-header,
-footer {
-  padding: 1.5rem 0;
-}
-
-main {
-  flex-direction: column;
-}
-
-.card {
-  border: 4px solid var(--dark);
-  border-radius: 2rem;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  background-color: var(--light);
-}
-
-.controls__back {
-  flex-direction: column;
-  cursor: pointer;
-  color: var(--yellow);
-}
-
-.controls__back .img-holder {
-  width: 3rem;
-}
-
-
-
-/* SCREEN 1: MENU */
-.game--menu {
-  display: grid;
-  cursor: pointer;
-  font-size: 2.4rem;
-}
-
-.game--menu .img-holder {
-  padding: 2rem 0.5rem;
-}
-
-.game--menu .img-holder img {
-  width: 60%;
-}
-
-/* SCREEN 2: PVP-PVE */
-.game--pvp,
-.game--pve {
-  font-size: 1.6rem;
-}
-
-.prematch-info {
-  display: grid;
-  grid-template-columns: 6.5rem auto 6.5rem;
-  align-items: center;
-  justify-content: center;
-  justify-items: center;
-  padding: 1rem 2.5rem;
-}
-
-.prematch-player {
-  flex-direction: column;
-}
-
-.prematch-player .img-holder {
-  padding: 0.2rem 1rem;
-}
-
-.prematch-player .player-symbol {
-  width: 80%;
-}
-
-.prematch-player input[type='text'] {
-  margin: 1.5rem 0;
-  outline: none;
-  border: none;
-  width: 120%;
-  text-align: center;
-  line-height: calc(100% + 1em);
-  font-family: 'GrilledCheese BTN';
-  font-size: 1.8rem;
-}
-
-.prematch-player input[name='Player 1'] {
-  color: var(--player1);
-}
-
-.prematch-player input[name='Player 1']::placeholder {
-  opacity: 0.5;
-  color: var(--player1);
-}
-
-.prematch-player input[name='Player 2'] {
-  color: var(--player2);
-}
-
-.prematch-player input[name='Player 2']::placeholder {
-  opacity: 0.5;
-  color: var(--player2);
-}
-
-.difficulty-selector {
-  display: flex;
-  grid-column: 1 / 4;
-  align-items: center;
-  justify-content: space-evenly;
-  padding: 1rem 0;
-  width: 100%;
-  gap: 0px;
-}
-
-.difficulty,
-.player-info__difficulty {
-  border: 4px solid var(--dark);
-  border-radius: 1rem;
-  cursor: pointer;
-  padding: 0.5rem 0.8rem;
-  text-align: center;
-  text-transform: uppercase;
-  color: var(--light);
-  font-size: 1rem;
-}
-
-.easy {
-  background-color: var(--easy);
-}
-
-.mid {
-  background-color: var(--mid);
-}
-
-.hard {
-  background-color: var(--hard);
-}
-
-.btn-fight {
-  grid-column: 1 / 4;
-  border: 4px solid var(--dark);
-  border-radius: 1.5rem;
-  background-color: var(--yellow);
-  cursor: pointer;
-  padding: 0.3rem 0;
-  width: 100%;
-  text-align: center;
-  font-size: 2.4rem;
-}
-
-/* SCREEN 3: BOARD GAME */
-.game--board {
-  grid-template-columns: 1fr 1fr;
-}
-
-.score-desktop {
-  display: none;
-}
-
-.score {
-  justify-self: center;
-  padding: 1rem;
-  min-width: 120px;
-  font-size: 2.2rem;
-  gap: 1rem;
-}
-
-.score img {
-  width: 3rem;
-}
-
-.score-p1 {
-  color: var(--player1);
-}
-
-.score-p2 {
-  color: var(--enemy);
-}
-
-.score-p1__points,
-.score-p2__points {
-  text-shadow: -0.06em 0 0.08em var(--dark), 0.06em 0 0.08em var(--dark),
-    0 0.06em 0.08em var(--dark), 0 -0.06em 0.08em var(--dark),
-    -0.06em 0.06em 0.08em var(--dark), 0.06em 0.06em 0.08em var(--dark),
-    -0.06em -0.06em 0.08em var(--dark), 0.06em -0.06em 0.08em var(--dark);
-}
-
-.board {
-  display: grid;
-  position: relative;
-  grid-template-rows: repeat(3, 1fr);
-  grid-template-columns: repeat(3, 1fr);
-  grid-column: 1 / 3;
-  align-items: center;
-  justify-items: center;
-  border: none;
-  cursor: pointer;
-  width: 75vw;
-  height: 75vw;
-  gap: 4px;
-}
-
-.board img {
-  width: 70%;
-}
-
-.board__square {
-  box-shadow: 0 0 0 4px var(--dark);
-  width: 100%;
-  height: 100%;
-}
-
-.square-0 {
-  border-top-left-radius: 2rem;
-}
-
-.square-2 {
-  border-top-right-radius: 2rem;
-}
-
-.square-6 {
-  border-bottom-left-radius: 2rem;
-}
-
-.square-8 {
-  border-bottom-right-radius: 2rem;
-}
-
-.round-result {
-  display: none;
-  position: absolute;
-  flex-direction: column;
-  border-radius: 2rem;
-  box-shadow: 0 0 0 4px var(--dark);
-  background-color: hsl(227, 54%, 16%, 0.95);
-  width: 100%;
-  height: 100%;
-  color: var(--light);
-  font-size: 3.2rem;
-}
-
-.result--winner {
-  color: var(--player1);
-}
-
-.result--controls {
-  grid-column: 1 / 3;
-  align-items: flex-end;
-  justify-content: space-around;
-  width: 100%;
-  height: 4.4rem;
-  letter-spacing: 0px;
-  color: var(--yellow);
-  font-size: 1.6rem;
-}
-
-.controls__back,
-.controls__next-round,
-.controls__reset-score {
-  flex-direction: column;
-  cursor: pointer;
-}
-
-.controls__next-round,
-.controls__reset-score {
-  display: none;
-}
-
-.controls__next-round {
-  line-height: calc(100% - 0.1em);
-  font-size: 2.4rem;
-}
-
-/* Medium devices (tablets, 640px and up) */
-@media (min-width: 640px) {
-  .board {
-    width: 25rem;
-    height: 25rem;
-  }
-
-  .round-result {
-    font-size: 4.2rem;
-  }
-}
-
-/* Extra large devices (large desktops, 1008px and up) */
-@media (min-width: 1008px) {
-  .game--board {
-    grid-template-rows: repeat(2, auto);
-    grid-template-columns: repeat(3, auto);
-    justify-content: space-evenly;
-    width: 100%;
-  }
-
-  .board {
-    grid-column: initial;
-    width: 30rem;
-    height: 30rem;
-  }
-
-  .result--controls {
-    grid-column: 2 / 3;
-  }
-
-  .score {
-    display: none;
-  }
-
-  .score-desktop {
-    display: flex;
-    flex-direction: column;
-    align-self: center;
-    gap: 1rem;
-  }
-
-  .player-info {
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-    min-width: 125px;
-    font-size: 1.8rem;
-  }
-
-  .player-info .img-holder {
-    margin-bottom: 0.5rem;
-    width: 3.5rem;
-  }
-
-  .player-info .player-symbol {
-    margin-bottom: 1.5rem;
-    width: 2.5rem;
-  }
-
-  .score-desktop__points {
-    text-align: center;
-    font-size: 2.4rem;
-  }
-
-  .player-info__diff-difficulty {
-    display: none;
-  }
-
-  .score-p1__points,
-  .score-p2__points {
-    text-shadow: inherit;
-  }
-}
-
-    </style>
-    <title>Tic Tac Toe</title>
-  </head>
-  <body>
-    <div class="wrapper">
-      <header>
-        <img src="https://cdn-icons-png.flaticon.com/512/566/566294.png?w=740&t=st=1678652118~exp=1678652718~hmac=82807131ea6c505ba3b80e3db4bf686119ffa0488c30a0b2fb2854c3c575bd3b" alt="TicTacToe Logo" />
-      </header>
-      <main>
-        <div class="game game--menu">
-          <div
-            class="pvp-mode card animate-bob navigation"
-            data-target="game--pvp"
-          >
-            <div class="img-holder">
-              <img src="https://st2.depositphotos.com/3867453/11018/v/950/depositphotos_110184254-stock-illustration-number-1-logo-icon-design.jpg" alt="Player 1" />
-            </div>
-
-            <span>VS</span>
-
-            <div class="img-holder">
-              <img src="https://st2.depositphotos.com/3867453/11018/v/950/depositphotos_110184254-stock-illustration-number-1-logo-icon-design.jpg" alt="Player 2" />
-            </div>
-          </div>
-
-          <div
-            class="pve-mode card animate-bob navigation"
-            data-target="game--pve"
-          >
-            <div class="img-holder">
-              <img src="https://st2.depositphotos.com/3867453/11018/v/950/depositphotos_110184254-stock-illustration-number-1-logo-icon-design.jpg" alt="Player 1" />
-            </div>
-            <span>VS</span>
-            <div class="img-holder">
-              <img src="https://img.freepik.com/premium-vector/cute-robot-logo-vector-design-template_612390-492.jpg?w=740" width="800" height="500" alt="Robot" />
-            </div>
-          </div>
-        </div>
-
-        <div class="game game--pvp">
-          <div class="card">
-            <div class="prematch-info">
-              <div class="prematch-player">
-                <div class="img-holder">
-                  <img src="https://st2.depositphotos.com/3867453/11018/v/950/depositphotos_110184254-stock-illustration-number-1-logo-icon-design.jpg" alt="Player 1" />
-                </div>
-                <div class="img-holder player-symbol">
-                  <img src="cross.svg" alt="Cross" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Player 1"
-                  name="Player 1"
-                  id="player-1"
-                  maxlength="8"
-                  class="text-stroke animate-bob-auto"
-                />
-              </div>
-
-              <span>VS</span>
-
-              <div class="prematch-player">
-                <div class="img-holder">
-                  <img src="https://st2.depositphotos.com/3867453/11018/v/950/depositphotos_110184254-stock-illustration-number-1-logo-icon-design.jpg" alt="Player 1" />
-                </div>
-                <div class="img-holder player-symbol">
-                  <img src="circle-blue.svg" alt="Circle" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Player 2"
-                  name="Player 2"
-                  id="player-2"
-                  maxlength="8"
-                  class="text-stroke animate-bob-auto"
-                />
-              </div>
-
-              <div
-                class="pvp-fight-btn btn-fight navigation"
-                data-target="game--board"
-              >
-                FIGHT!
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="controls__back animate-scale navigation"
-            data-target="game--menu"
-          >
-            <div class="img-holder">
-              <img src="https://img.icons8.com/ios/256/circled-left-2.png" alt="Back to menu" />
-            </div>
-            <span class="text-stroke">Back</span>
-          </div>
-        </div>
-
-        <div class="game game--pve">
-          <div class="card">
-            <div class="prematch-info">
-              <div class="prematch-player">
-                <div class="img-holder">
-                  <img src="https://st2.depositphotos.com/3867453/11018/v/950/depositphotos_110184254-stock-illustration-number-1-logo-icon-design.jpg alt="Player 1" />
-                </div>
-                <div class="img-holder player-symbol">
-                  <img src="cross.svg" alt="Cross" />
-                </div>
-              </div>
-
-              <span>VS</span>
-
-              <div class="prematch-player">
-                <div class="img-holder">
-                  <img src="https://img.freepik.com/premium-vector/cute-robot-logo-vector-design-template_612390-492.jpg?w=740"  alt="Robot" />
-                </div>
-                <div class="img-holder player-symbol">
-                  <img src="circle-red.svg" alt="Circle" />
-                </div>
-              </div>
-
-              <div class="difficulty-selector text-stroke">
-                <div
-                  class="difficulty easy animate-bob animate-grayscale"
-                  data-difficulty="easy"
-                >
-                  <span>Easy</span>
-                </div>
-                <div
-                  class="difficulty mid animate-bob animate-grayscale"
-                  data-difficulty="mid"
-                >
-                  <span>Mid</span>
-                </div>
-                <div
-                  class="difficulty hard animate-bob animate-grayscale"
-                  data-difficulty="hard"
-                >
-                  <span>Hard</span>
-                </div>
-              </div>
-
-              <div
-                class="pve-fight-btn btn-fight navigation"
-                data-target="game--board"
-              >
-                FIGHT!
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="controls__back animate-scale navigation"
-            data-target="game--menu"
-          >
-            <div class="img-holder">
-              <img src="https://img.icons8.com/ios/256/circled-left-2.png" alt="Back to menu" />
-            </div>
-            <span class="text-stroke">Back</span>
-          </div>
-        </div>
-
-        <div class="game game--board">
-          <div class="card card-p1 score score-p1 player-card">
-            <div class="img-holder">
-              <img src="https://st2.depositphotos.com/3867453/11018/v/950/depositphotos_110184254-stock-illustration-number-1-logo-icon-design.jpg" alt="Player 1" />
-            </div>
-            <span class="score-p1__points text-stroke"></span>
-          </div>
-
-          <div class="card card-p2 score score-p2 player-card">
-            <div class="img-holder">
-              <img
-                src="https://st2.depositphotos.com/3867453/11018/v/950/depositphotos_110184254-stock-illustration-number-1-logo-icon-design.jpg"
-                alt="Player 2"
-                class="enemy-picture"
-              />
-            </div>
-            <span class="score-p2__points text-stroke"></span>
-          </div>
-
-          <div class="score-desktop score-p1">
-            <div class="card card-p1 player-info player-card">
-              <div class="img-holder">
-                <img src="https://st2.depositphotos.com/3867453/11018/v/950/depositphotos_110184254-stock-illustration-number-1-logo-icon-design.jpg" alt="Player 1" />
-              </div>
-              <div class="img-holder player-symbol">
-                <img src="cross.svg" alt="Cross" />
-              </div>
-              <span class="player-info__name-1 text-stroke"></span>
-            </div>
-
-            <div class="score-desktop__points text-stroke">
-              <span>Wins: </span><span class="score-p1__points"></span>
-            </div>
-          </div>
-
-          <div class="card board result--overlay">
-            <div class="board__square square-0" data-index="0">
-              <img src="" />
-            </div>
-            <div class="board__square square-1" data-index="1">
-              <img src="" />
-            </div>
-            <div class="board__square square-2" data-index="2">
-              <img src="" />
-            </div>
-            <div class="board__square square-3" data-index="3">
-              <img />
-            </div>
-            <div class="board__square square-4" data-index="4">
-              <img src="" />
-            </div>
-            <div class="board__square square-5" data-index="5">
-              <img />
-            </div>
-            <div class="board__square square-6" data-index="6">
-              <img src="" />
-            </div>
-            <div class="board__square square-7" data-index="7">
-              <img />
-            </div>
-            <div class="board__square square-8" data-index="8">
-              <img src="" />
-            </div>
-            <div class="round-result animate-fadein text-stroke">
-              <span class="result--winner"></span>
-              <span class="result--text"></span>
-            </div>
-          </div>
-
-          <div class="score-desktop score-p2">
-            <div class="card card-p2 player-info player-card">
-              <div class="img-holder">
-                <img
-                  src="https://st2.depositphotos.com/3867453/11018/v/950/depositphotos_110184254-stock-illustration-number-1-logo-icon-design.jpg"
-                  alt="Enemy Picture"
-                  class="enemy-picture"
-                />
-              </div>
-              <div class="img-holder player-symbol">
-                <img
-                  class="enemy-symbol"
-                  src="https://st2.depositphotos.com/3867453/11018/v/950/depositphotos_110184254-stock-illustration-number-1-logo-icon-design.jpg"
-                  alt="Enemy Symbol"
-                />
-              </div>
-              <span class="player-info__name-2 text-stroke"></span>
-              <div class="player-info__difficulty text-stroke"></div>
-            </div>
-
-            <div class="score-desktop__points text-stroke">
-              <span>Wins: </span><span class="score-p2__points"></span>
-            </div>
-          </div>
-
-          <div class="result--controls">
-            <div
-              class="controls__back animate-scale text-stroke navigation"
-              data-target="game--menu"
-            >
-              <div class="img-holder">
-                <img src="https://img.icons8.com/ios/256/circled-left-2.png" alt="Back to menu" />
-              </div>
-              <span>Back</span>
-            </div>
-
-            <div class="controls__next-round animate-scale text-stroke">
-              <span>Next</span>
-              <span>Round!</span>
-            </div>
-
-            <div class="controls__reset-score animate-scale text-stroke">
-              <span>Reset</span>
-              <span>Score</span>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
-    <script>
-      
-
-let playerOne;
-let playerTwo;
-
-// DISPLAY CONTROLLER MODULE
-const displayController = (() => {
-  let gameDifficulty = 'easy'; // 'easy' as initial difficulty in case player doesn't select any
-  let gameMode;
-  const getGameMode = () => gameMode;
-
-  // UI - PLAYERS ATTRIBUTES
-  const cssRoot = getComputedStyle(document.documentElement);
-  const playerOneColor = cssRoot.getPropertyValue('--player1');
-  const playerOneSymbolURL = 'cross.svg';
-  const playerTwoColor = cssRoot.getPropertyValue('--player2');
-  const playerTwoPicture = 'player-alt.svg';
-  const playerTwoSymbol = 'circle-blue.svg';
-  const robotColor = cssRoot.getPropertyValue('--robot');
-  const robotPicture = 'robot.svg';
-  const robotSymbol = 'circle-red.svg';
-
-  // UI ELEMENTS - SCREEN NAVIGATION
-  const gameScreens = document.querySelectorAll('.game');
-  const navigationBtns = document.querySelectorAll('.navigation');
-
-  // UI ELEMENTS - PRE-MATCH
-  const playerOneInput = document.querySelector('#player-1');
-  const playerTwoInput = document.querySelector('#player-2');
-  const enemyCards = document.querySelectorAll('.score-p2');
-  const enemyPictures = document.querySelectorAll('.enemy-picture');
-  const enemySymbol = document.querySelector('.enemy-symbol');
-  const difficultyBtns = document.querySelectorAll('.difficulty');
-
-  // UI ELEMENTS - GAME BOARD (Different Cards and Scores for Desktop / Mobile views)
-  const boardPlayerCards = document.querySelectorAll('.player-card');
-  const boardPlayerOneCards = document.querySelectorAll('.card-p1');
-  const boardPlayerOneName = document.querySelector('.player-info__name-1');
-  const boardPlayerOneScores = document.querySelectorAll('.score-p1__points');
-  const boardPlayerTwoCards = document.querySelectorAll('.card-p2');
-  const boardPlayerTwoName = document.querySelector('.player-info__name-2');
-  const boardPlayerTwoScores = document.querySelectorAll('.score-p2__points');
-  const boardDifficultyTag = document.querySelector('.player-info__difficulty');
-  const boardSquares = document.querySelectorAll('.board__square');
-  const boardNextRoundBtn = document.querySelector('.controls__next-round');
-  const boardResetScoreBtn = document.querySelector('.controls__reset-score');
-  const roundResult = document.querySelector('.round-result');
-  const roundResultWinner = document.querySelector('.result--winner');
-  const roundResultMessage = document.querySelector('.result--text');
-
-  // METHODS - UTILITY
-  const setDisplayStyle = (value, ...elements) => {
-    elements.forEach((element) => (element.style.display = value));
-  };
-
-  // METHODS - SCREEN NAVIGATION
-  const navigageTo = (screen) => {
-    prepareScreen(screen);
-    hideAllScreens();
-    showScreen(screen);
-  };
-
-  navigationBtns.forEach((button) => {
-    button.addEventListener('click', () => {
-      navigageTo(button.dataset.target);
-    });
-  });
-
-  const prepareScreen = (screen) => {
-    switch (screen) {
-      case 'game--menu':
-        gameBoard.resetGame();
-        resetGame();
-        break;
-
-      case 'game--pvp':
-        setEnemyAttributes(playerTwoPicture, playerTwoColor, playerTwoSymbol);
-        gameMode = 'pvp';
-        break;
-
-      case 'game--pve':
-        setEnemyAttributes(robotPicture, robotColor, robotSymbol);
-        gameMode = 'pve';
-        break;
-
-      case 'game--board':
-        createPlayers();
-        refreshScores();
-        fillBoardCards();
-        animatePlayerCard('x'); // When starting a new match, X always goes first
-        break;
-    }
-  };
-
-  const hideAllScreens = () => {
-    gameScreens.forEach((screen) => setDisplayStyle('none', screen));
-  };
-
-  const showScreen = (screen) => {
-    setDisplayStyle('grid', document.querySelector(`.${screen}`));
-  };
-
-  // METHODS - PRE-MATCH
-  const setEnemyAttributes = (pictureURL, colorValue, symbolURL) => {
-    enemyPictures.forEach((enemyPicture) => (enemyPicture.src = pictureURL));
-    enemyCards.forEach((enemyCard) => (enemyCard.style.color = colorValue));
-    enemySymbol.src = symbolURL;
-  };
-
-  const toggleDifficultyBtn = (clickedButton) => {
-    difficultyBtns.forEach((button) => {
-      button.classList.remove('current-difficulty');
-      button.classList.add('animate-bob', 'animate-grayscale');
-    });
-    clickedButton.classList.add('current-difficulty');
-    clickedButton.classList.remove('animate-bob', 'animate-grayscale');
-  };
-
-  difficultyBtns.forEach((button) =>
-    button.addEventListener('click', () => {
-      toggleDifficultyBtn(button);
-      gameDifficulty = button.dataset.difficulty;
-    })
-  );
-
-  // METHODS - PLAYERS CREATION
-
-  const getDifficultyFactor = () => {
-    // Probability of Robot making the optimal move in its turn
-    switch (gameDifficulty) {
-      case 'easy':
-        return 60;
-
-      case 'mid':
-        return 80;
-
-      case 'hard':
-        return 100;
-    }
-  };
-
-  const createPlayers = () => {
-    switch (gameMode) {
-      case 'pvp':
-        playerOne = Player(playerOneInput.value || 'Player 1');
-        playerTwo = Player(playerTwoInput.value || 'Player 2');
-        break;
-
-      case 'pve':
-        playerOne = Player('Human');
-        playerTwo = Player('Robot', getDifficultyFactor());
-        break;
-    }
-  };
-
-  // METHODS - GAME BOARD
-  const fillBoardCards = () => {
-    switch (gameMode) {
-      case 'pvp':
-        boardPlayerOneName.textContent = playerOne.getName();
-        boardPlayerTwoName.textContent = playerTwo.getName();
-        setDisplayStyle('flex', boardPlayerTwoName);
-        setDisplayStyle('none', boardDifficultyTag);
-        break;
-
-      case 'pve':
-        boardPlayerOneName.textContent = playerOne.getName();
-        setDisplayStyle('none', boardPlayerTwoName);
-        setDisplayStyle('flex', boardDifficultyTag);
-        boardDifficultyTag.textContent = gameDifficulty;
-        boardDifficultyTag.classList.add(gameDifficulty);
-        break;
-    }
-  };
-
-  const fillSquare = (squareIndex, isPlayerOneTurn) => {
-    const square = document.querySelector(`[data-index='${squareIndex}']`)
-      .firstElementChild;
-
-    const playerSymbolURL = isPlayerOneTurn
-      ? playerOneSymbolURL
-      : enemySymbol.src;
-
-    square.src = playerSymbolURL;
-  };
-
-  boardSquares.forEach((boardSquare) => {
-    boardSquare.addEventListener('click', (square) => {
-      const squareIndex = square.currentTarget.dataset.index;
-      gameBoard.makeMove(squareIndex);
-    });
-  });
-
-  const processResult = (winner) => {
-    switch (winner) {
-      case 'x':
-        setRoundResultMsg(playerOne.getName(), 'Wins!', playerOneColor);
-        refreshScores();
-        break;
-
-      case 'o':
-        setRoundResultMsg(
-          playerTwo.getName(),
-          'Wins!',
-          enemyCards[0].style.color
-        );
-        refreshScores();
-        break;
-
-      case 'tie':
-        animatePlayerCard();
-        setRoundResultMsg('', `It's a tie!`);
-        break;
-    }
-    setDisplayStyle('flex', roundResult, boardNextRoundBtn, boardResetScoreBtn);
-  };
-
-  const setRoundResultMsg = (winner, message, color = '') => {
-    roundResultWinner.innerText = winner;
-    roundResultWinner.style.color = color;
-    roundResultMessage.innerText = message;
-  };
-
-  const animatePlayerCard = (symbol) => {
-    boardPlayerCards.forEach((card) =>
-      card.classList.remove('animate-bob-turn')
-    );
-    switch (symbol) {
-      case 'x':
-        boardPlayerOneCards.forEach((card) =>
-          card.classList.add('animate-bob-turn')
-        );
-        break;
-
-      case 'o':
-        boardPlayerTwoCards.forEach((card) =>
-          card.classList.add('animate-bob-turn')
-        );
-        break;
-    }
-  };
-
-  // METHODS - GAME UTILITIES
-  boardNextRoundBtn.addEventListener('click', () => gameBoard.resetTurn());
-  boardResetScoreBtn.addEventListener('click', () => {
-    playerOne.resetScore();
-    playerTwo.resetScore();
-    refreshScores();
-  });
-
-  const refreshScores = () => {
-    boardPlayerOneScores.forEach(
-      (score) => (score.innerText = playerOne.getScore())
-    );
-    boardPlayerTwoScores.forEach(
-      (score) => (score.innerText = playerTwo.getScore())
-    );
-  };
-
-  const clearBoard = () => {
-    boardSquares.forEach((square) => (square.firstElementChild.src = ''));
-    setDisplayStyle('none', roundResult, boardNextRoundBtn, boardResetScoreBtn);
-  };
-
-  const resetTurn = () => {
-    clearBoard();
-    animatePlayerCard(gameBoard.getCurrentPlayerSymbol());
-  };
-
-  const resetGame = () => {
-    clearBoard();
-    playerOneInput.value = '';
-    playerTwoInput.value = '';
-    boardDifficultyTag.classList.remove(gameDifficulty); // Prevents DifficultyTag from stacking styles when difficulty is changed
-  };
-
-  // PUBLIC
-  return {
-    animatePlayerCard,
-    fillSquare,
-    getGameMode,
-    resetTurn,
-    processResult,
-  };
-})();
-
-// PLAYER FACTORY
-const Player = (name, difficulty) => {
-  let score = 0;
-  const getName = () => name;
-  const getDifficulty = () => difficulty;
-  const getScore = () => score;
-  const resetScore = () => (score = 0);
-  const winRound = () => (score += 1);
-
-  // PUBLIC
-  return {
-    getName,
-    getDifficulty,
-    getScore,
-    resetScore,
-    winRound,
-  };
-};
-
-// BOARD MODULE
-const gameBoard = (() => {
-  const winningConditions = [
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-  let boardArray = [0, 1, 2, 3, 4, 5, 6, 7, 8]; // Easier access to index of 'empty' squares
-  let isPlayerOneTurn = true; // Controls turns inside round
-  let isPlayerOneStarting = true; // Controls initial turn each round
-
-  const isSquareEmpty = (square) => {
-    return typeof square === 'number';
-  };
-
-  const getEmptySquares = (board) => {
-    return board.filter((square) => isSquareEmpty(square));
-  };
-
-  const getCurrentPlayerSymbol = () => {
-    return isPlayerOneTurn ? 'x' : 'o';
-  };
-
-  const fillSquare = (index) => {
-    boardArray[index] = getCurrentPlayerSymbol();
-  };
-
-  const changeTurn = () => {
-    isPlayerOneTurn = !isPlayerOneTurn;
-  };
-
-  const isRobotTurn = () => {
-    return !isPlayerOneTurn && displayController.getGameMode() === 'pve';
-  };
-
-  const makeMove = (index) => {
-    if (!isSquareEmpty(boardArray[index])) return null;
-    fillSquare(index);
-    displayController.fillSquare(index, isPlayerOneTurn);
-    let roundResult = checkRound(boardArray);
-    if (roundResult) {
-      processResult(roundResult);
-    } else {
-      // No win or tie (roundResult === null)
-      changeTurn();
-      displayController.animatePlayerCard(getCurrentPlayerSymbol());
-      if (isRobotTurn()) makeRobotMove();
-    }
-  };
-
-  const checkRound = (board) => {
-    // Win check
-    let winnerSymbol;
-    const isWin = winningConditions.some((winPattern) => {
-      // Some row-column-diagonal pattern
-      return winPattern.every((index) => {
-        // Every square content (symbol) is the same
-        if (isSquareEmpty(board[index])) return false; // Skip pattern when empty square found
-        winnerSymbol = board[index];
-        return board[index] === board[winPattern[0]]; // Has symbol always stayed the same? (winner found)
-      });
-    });
-    if (isWin) return winnerSymbol;
-
-    // Tie check
-    const emptySquares = getEmptySquares(board);
-    const isTie = emptySquares.length === 0; // Is board full?
-    if (isTie) return 'tie';
-
-    // Round keeps going
-    return null;
-  };
-
-  const processResult = (roundResult) => {
-    switch (roundResult) {
-      case 'x':
-        playerOne.winRound();
-        break;
-      case 'o':
-        playerTwo.winRound();
-        break;
-    }
-    displayController.processResult(roundResult);
-  };
-
-  const makeRobotMove = () => {
-    const bestMoveOdds = playerTwo.getDifficulty(); // Easy: 60% | Mid: 80% | Hard: 100%
-    if (bestMoveOdds === 100) makeMove(getBestMove());
-    else {
-      // Random Number Generator (RNG) for 'easy' and 'mid' robot difficulties
-      const randomMoveOdds = Math.floor(Math.random() * 101); // Random number 0-100
-      const robotMove =
-        bestMoveOdds > randomMoveOdds ? getBestMove() : getRandomMove();
-      makeMove(robotMove);
-    }
-  };
-
-  const getRandomMove = () => {
-    const emptySquares = getEmptySquares(boardArray);
-    const randomIndex = Math.floor(Math.random() * emptySquares.length);
-    return emptySquares[randomIndex];
-  };
-
-  const getBestMove = () => {
-    const boardState = boardArray; // Board copy to avoid modifying the original one while minimax
-    const emptySquares = getEmptySquares(boardState);
-    let bestMoveIndex;
-    let bestMoveScore = -Infinity;
-    let moveScore;
-
-    emptySquares.forEach((index) => {
-      boardState[index] = 'o';
-      moveScore = minimaxScore(boardState, 0, -Infinity, Infinity, false);
-      boardState[index] = index; // Undo move in board after minimax
-      if (moveScore > bestMoveScore) {
-        bestMoveScore = moveScore;
-        bestMoveIndex = index;
-      }
-    });
-    return bestMoveIndex;
-  };
-
-  const minimaxScore = (boardState, depth, alpha, beta, isMaximizing) => {
-    // Static evalution if game would be over in this state
-    const roundResult = checkRound(boardState);
-    if (roundResult !== null) return staticEvaluation(roundResult, depth);
-
-    // If it's not an ending state, continue minimax recursion
-    const emptySquares = getEmptySquares(boardState);
-    let moveScore;
-    if (isMaximizing) {
-      // Maximizing turn
-      let bestMoveScore = -Infinity;
-      emptySquares.some((index) => {
-        boardState[index] = 'o';
-        moveScore = minimaxScore(boardState, depth + 1, alpha, beta, false);
-        boardState[index] = index;
-        bestMoveScore = Math.max(bestMoveScore, moveScore);
-        // Alpha-beta pruning
-        alpha = Math.max(alpha, bestMoveScore);
-        if (alpha >= beta) return true; // Prune this branch (stops evaluating other empty squares)
-      });
-      return bestMoveScore;
-    } else {
-      // Minimizing turn
-      let bestMoveScore = Infinity;
-      emptySquares.some((index) => {
-        boardState[index] = 'x';
-        moveScore = minimaxScore(boardState, depth + 1, alpha, beta, true);
-        boardState[index] = index;
-        bestMoveScore = Math.min(bestMoveScore, moveScore);
-        // Alpha-beta pruning
-        beta = Math.min(beta, bestMoveScore);
-        if (alpha >= beta) return true; // Prune this branch (stops evaluating other empty squares)
-      });
-      return bestMoveScore;
-    }
-  };
-
-  const staticEvaluation = (roundResult, depth) => {
-    switch (roundResult) {
-      case 'o':
-        return 100 - depth;
-      case 'x':
-        return -100;
-      case 'tie':
-        return 0;
-    }
-  };
-
-  const resetTurn = () => {
-    boardArray = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-    isPlayerOneStarting = !isPlayerOneStarting;
-    isPlayerOneTurn = isPlayerOneStarting;
-    displayController.resetTurn();
-    if (isRobotTurn()) makeRobotMove(); // Allows Robot making first move in its turn
-  };
-
-  const resetGame = () => {
-    boardArray = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-    isPlayerOneStarting = true;
-    isPlayerOneTurn = true;
-    playerOne = null;
-    playerTwo = null;
-  };
-
-  // PUBLIC
-  return {
-    getCurrentPlayerSymbol,
-    makeMove,
-    resetTurn,
-    resetGame,
-  };
-})();
-
-    </script>
-  </body>
 </html>
