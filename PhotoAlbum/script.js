@@ -293,23 +293,4 @@ scope.addEventListener("contextmenu", (e) => {
   });
 }, false);
 
-contextmenu.addEventListener('click',(event)=>{
-    if (event.target.id=="it7"){
-        var name = curr.target.getAttribute("alt");
-        alert(name);
-        
-        // create thumbnail
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = 150;
-        canvas.height = 150;
-        ctx.drawImage(curr.target, 0, 0, canvas.width, canvas.height);
-        const thumbnailDataURL = canvas.toDataURL();
-        const thumbnail = document.createElement('img');
-        thumbnail.src = thumbnailDataURL;
-        thumbnail.style.border = '1px solid black';
-        thumbnail.style.margin = '10px';
-        document.body.appendChild(thumbnail);
-    }
-    // other options
-});
+
